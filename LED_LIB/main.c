@@ -41,14 +41,14 @@ int main(void)
     while (1);
 
 
-    //    while (1)
-    //    {
-    //        GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+    // while (1)
+    // {
+    //     GPIO_ResetBits(GPIOB, GPIO_Pin_5);
 
-    //        Delay(0xFFFF);
+    //     Delay(0xFFFF);
 
-    //        GPIO_SetBits(GPIOB, GPIO_Pin_5);
+    //     GPIO_SetBits(GPIOB, GPIO_Pin_5);
 
-    //        Delay(0xFFFF);
-    //    }
+    //     Delay(0xFFFF);
+    // }
 }

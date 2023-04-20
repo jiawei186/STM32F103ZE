@@ -2,6 +2,8 @@
 #include "led.h"
 #include "key.h"
 #include "delay.h"
+#include "clkconfig.h"
+
 
 #define SOFT_DELAY Delay(0xFFFFFF);
 
@@ -58,10 +60,17 @@ void Delay(__IO uint32_t nCount)
 int main(void)
 {
     LED_GPIO_Config();
-    Key_GPIO_Config();
+    // Key_GPIO_Config();
 
     // LED1_ON;
     // LED2_ON;
+
+
+    // HSE_SetSysClock(RCC_PLLMul_9);
+    HSI_SetSysClock(RCC_PLLMul_2);
+
+    MCO_GPIO_Config();
+    RCC_MCOConfig(RCC_MCO_SYSCLK);
 
     while(1)
     {
@@ -106,16 +115,24 @@ int main(void)
         //     LED2_TOGGLE;
         // }
 
-        PBout(5) = 0;
-        Delay_s(2);
 
-        PBout(5) = 1;
-        Delay_s(2);
+        // PBout(5) = 0;
+        // Delay_s(2);
 
-        PEout(5) = 0;
-        Delay_s(2);
+        // PBout(5) = 1;
+        // Delay_s(2);
 
-        PEout(5) = 1;
-        Delay_s(2);
+        // PEout(5) = 0;
+        // Delay_s(2);
+
+        // PEout(5) = 1;
+        // Delay_s(2);
+
+
+        LED_LD;
+        Delay_s(1);
+
+        LED_DL;
+        Delay_s(1);
     }
 }

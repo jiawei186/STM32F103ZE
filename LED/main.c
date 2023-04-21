@@ -1,8 +1,12 @@
 #include "stm32f10x.h"
+#include "stm32f10x_conf.h"
+#include "stm32f10x_it.h"
 #include "led.h"
 #include "key.h"
-#include "delay.h"
+// #include "delay.h"
 #include "clkconfig.h"
+#include "exti.h"
+#include "systick.h"
 
 
 #define SOFT_DELAY Delay(0xFFFFFF);
@@ -61,16 +65,17 @@ int main(void)
 {
     LED_GPIO_Config();
     // Key_GPIO_Config();
+    // EXTI_Key_Config();
 
-    // LED1_ON;
-    // LED2_ON;
+    LED1_ON;
+    LED2_ON;
 
 
     // HSE_SetSysClock(RCC_PLLMul_9);
-    HSI_SetSysClock(RCC_PLLMul_2);
+    // HSI_SetSysClock(RCC_PLLMul_2);
 
-    MCO_GPIO_Config();
-    RCC_MCOConfig(RCC_MCO_SYSCLK);
+    // MCO_GPIO_Config();
+    // RCC_MCOConfig(RCC_MCO_SYSCLK);
 
     while(1)
     {
@@ -110,7 +115,9 @@ int main(void)
         // if (Key_Scan() == 1)
         // {
         //     LED1_TOGGLE;
-        // } else if (Key_Scan() == 2)
+        // }
+		
+		// if (Key_Scan() == 2)
         // {
         //     LED2_TOGGLE;
         // }
@@ -129,10 +136,25 @@ int main(void)
         // Delay_s(2);
 
 
+        // LED_LD;
+        // Delay_s(1);
+
+        // LED_DL;
+        // Delay_s(1);
+
+
+        SysTick_Init();
+
         LED_LD;
-        Delay_s(1);
+        Delay_10us(100 * 1000);
 
         LED_DL;
-        Delay_s(1);
+        Delay_10us(100 * 1000);
+
+        LED_LD;
+        SysTick_Delay_Us(1000 * 100);
+
+        LED_DL;
+        SysTick_Delay_Ms(100);
     }
 }

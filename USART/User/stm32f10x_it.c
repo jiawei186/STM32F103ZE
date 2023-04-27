@@ -25,6 +25,7 @@
 #include "stm32f10x_it.h"
 #include "usart.h"
 #include "adc.h"
+#include "tim.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -138,6 +139,7 @@ void SysTick_Handler(void)
 {
 }
 
+/* 
 void DEBUG_USART_IRQHandler(void)
 {
   uint8_t ucTemp;
@@ -147,7 +149,9 @@ void DEBUG_USART_IRQHandler(void)
     USART_SendData(DEBUG_USARTx, ucTemp);
   }
 }
+ */
 
+/* 
 void ADC_IRQHandler(void)
 {
   if(ADC_GetITStatus(ADCx, ADC_IT_EOC) == SET)
@@ -156,6 +160,100 @@ void ADC_IRQHandler(void)
   }
   ADC_ClearITPendingBit(ADCx, ADC_IT_EOC);
 }
+ */
+
+#if defined(__TIM_F)
+
+extern volatile uint32_t time;
+
+void BASIC_TIM_IRQHandler(void)
+{
+  if(TIM_GetITStatus(BASIC_TIM, TIM_IT_Update) != RESET)
+  {
+    time++;
+    TIM_ClearITPendingBit(BASIC_TIM, TIM_FLAG_Update);
+  }
+}
+
+#elif defined(__TIM_G_F)
+
+extern volatile uint32_t time;
+
+void ADVANCE_TIM_IRQHandler(void)
+{
+  if (TIM_GetITStatus(ADVANCE_TIM, TIM_IT_Update) != RESET)
+  {
+    time++;
+    TIM_ClearITPendingBit(ADVANCE_TIM, TIM_FLAG_Update);
+  }
+}
+
+#elif defined(__TIM_T_F)
+
+void GENERAL_TIM_INT_FUN(void)
+{
+  if (TIM_GetITStatus(GENERAL_TIM, TIM_IT_Update) != RESET)
+  {
+    TIM_ICUserValueStructure.Capture_Period++;
+    TIM_ClearITPendingBit(GENERAL_TIM, TIM_FLAG_Update);
+  }
+
+  if (TIM_GetITStatus(GENERAL_TIM, GENERAL_TIM_IT_CCx) != RESET)
+  {
+    if (TIM_ICUserValueStructure.Capture_StartFlag == 0)
+    {
+      TIM_SetCounter(GENERAL_TIM, 0);
+      TIM_ICUserValueStructure.Capture_Period = 0;
+      TIM_ICUserValueStructure.Capture_CcrValue = 0;
+
+      GENERAL_TIM_OCxPolarityConfig_FUN(GENERAL_TIM, TIM_ICPolarity_Falling);
+      TIM_ICUserValueStructure.Capture_StartFlag = 1;
+    }
+    else
+    {
+      TIM_ICUserValueStructure.Capture_CcrValue =
+          GENERAL_TIM_GetCapturex_FUN(GENERAL_TIM);
+
+      GENERAL_TIM_OCxPolarityConfig_FUN(GENERAL_TIM, TIM_ICPolarity_Rising);
+      TIM_ICUserValueStructure.Capture_StartFlag = 0;
+      TIM_ICUserValueStructure.Capture_FinishFlag = 1;
+    }
+
+    TIM_ClearITPendingBit(GENERAL_TIM, GENERAL_TIM_IT_CCx);
+  }
+}
+
+#endif
+
+#ifdef __TIM_PWM_IN
+
+__IO uint16_t IC2Value = 0;
+__IO uint16_t IC1Value = 0;
+__IO float DutyCycle = 0;
+__IO float Frequency = 0;
+
+void ADVANCE_TIM_IRQHandler(void)
+{
+  TIM_ClearITPendingBit(ADVANCE_TIM, TIM_IT_CC1);
+
+  IC1Value = TIM_GetCapture1(ADVANCE_TIM);
+  IC2Value = TIM_GetCapture2(ADVANCE_TIM);
+
+  if (IC1Value != 0)
+  {
+    DutyCycle = (float)((IC2Value + 1) * 100) / (IC1Value + 1);
+
+    Frequency = (72000000 / (ADVANCE_TIM_PSC + 1)) / (float)(IC1Value + 1);
+    printf("占空比：%0.2f%%   频率：%0.2fHz\n", DutyCycle, Frequency);
+  }
+  else
+  {
+    DutyCycle = 0;
+    Frequency = 0;
+  }
+}
+
+#endif
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */

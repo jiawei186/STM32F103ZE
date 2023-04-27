@@ -8,7 +8,7 @@
 
 #define __ADC_THIRD
 
-#ifdef __ADC_FIRST
+#if defined(__ADC_FIRST)
 
 #define ADC_APBxClock_FUN RCC_APB2PeriphClockCmd
 #define ADCx ADC2
@@ -24,10 +24,7 @@
 #define ADC_IRQ ADC1_2_IRQn
 #define ADC_IRQHandler ADC1_2_IRQHandler
 
-#endif // __ADC_FIRST
-
-
-#ifdef __ADC_SECOND
+#elif defined(__ADC_SECOND)
 
 #define ADC_APBxClock_FUN RCC_APB2PeriphClockCmd
 #define ADC_CLK RCC_APB2Periph_ADC1
@@ -60,9 +57,7 @@
 #define ADC_DMA_CHANNEL DMA1_Channel1
 #define ADC_DMA_CLK RCC_AHBPeriph_DMA1
 
-#endif // __ADC_SECOND
-
-#ifdef __ADC_THIRD
+#elif defined(__ADC_THIRD)
 
 #define ADCx_1 ADC1
 #define ADCx_1_APBxClock_FUN RCC_APB2PeriphClockCmd
@@ -88,7 +83,7 @@
 
 #define ADC_DMA_CHANNEL DMA1_Channel1
 
-#endif // __ADC_THIRD
+#endif
 
 void ADCx_Init(void);
 

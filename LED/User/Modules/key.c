@@ -1,5 +1,6 @@
 #include "key.h"
-#include "Delay.h"
+// #include "Delay.h"
+#include "systick.h"
 
 void Key_GPIO_Config(void)
 {
@@ -35,18 +36,18 @@ uint8_t Key_Scan(void)
 
     if (GPIO_ReadInputDataBit(KEY0_GPIO_PORT, KEY0_GPIO_PIN) == KEY_ON)
     {
-        Delay_ms(10);
+        SysTick_Delay_Ms(20);
         while (GPIO_ReadInputDataBit(KEY0_GPIO_PORT, KEY0_GPIO_PIN) == KEY_ON);
-        Delay_ms(10);
+        SysTick_Delay_Ms(20);
 
         KeyNum = 1;
     }
 
     if (GPIO_ReadInputDataBit(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON)
     {
-        Delay_ms(10);
+        SysTick_Delay_Ms(20);
         while (GPIO_ReadInputDataBit(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON);
-        Delay_ms(10);
+        SysTick_Delay_Ms(20);
 
         KeyNum = 2;
     }
